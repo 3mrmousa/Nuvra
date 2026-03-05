@@ -1,65 +1,98 @@
-import Image from "next/image";
+import ForecasrCards from "./components/dashboard/ForecastCards";
+import MapBlock from "./components/dashboard/MapBlock";
+import TodayForecastCard from "./components/dashboard/TodayForecastCard";
+import { featch, fetchSun } from "./lib/featch";
+import ChartsForWeather from "./components/ChartsForWeather";
 
-export default function Home() {
+import { cookies } from "next/headers";
+import { getLocationByState } from "./lib/serverData";
+
+export async function generateMetadata() {
+  const c = await cookies();
+  const myLat = c.get("lat")?.value || "29.987075";
+  const myLon = c.get("lon")?.value || "31.211806";
+
+  const locationByState = await getLocationByState(myLon, myLat);
+
+  const city =
+    locationByState.features[0].properties.city ||
+    locationByState.features[0].properties.state ||
+    "Unknown Location";
+
+  const countryRaw =
+    locationByState.features[0].properties.country || "Unknown Country";
+  const country = countryRaw === "Israel" ? "Palestine" : countryRaw;
+
+  return {
+    title: `Dashboard - ${city}, ${country}`,
+    description: "Your Personal Weather Companion",
+  };
+}
+
+export default async function Dashboard() {
+  const c = await cookies();
+  const myLat = c.get("lat")?.value || "29.987075";
+  const myLon = c.get("lon")?.value || "31.211806";
+
+  const nextSevenDays = await featch(String(myLon), String(myLat), 7);
+
+  const todaySun = await fetchSun(myLon, myLat);
+
+  const sunrise = new Date(todaySun.daily.sunrise[0]);
+  const sunset = new Date(todaySun.daily.sunset[0]);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <section className="mt-25 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 px-10 py-5 gap-y-10 gap-x-5 min-h-screen">
+      <div className="md:col-span-2 lg:col-span-3 flex flex-col md:flex-row items-center gap-5">
+        <TodayForecastCard />
+        <div className="flex gap-5 overflow-x-auto min-w-0 w-full">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <ForecasrCards
+              key={i}
+              time={nextSevenDays.daily.time[i + 1]}
+              max={nextSevenDays.daily.temperature_2m_max[i + 1]}
+              min={nextSevenDays.daily.temperature_2m_min[i + 1]}
+              weather_code={nextSevenDays.daily.weather_code[i + 1]}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          ))}
         </div>
-      </main>
-    </div>
+      </div>
+
+      <div className="my-auto">
+        <ChartsForWeather />
+      </div>
+
+      <div className="md:col-span-2 lg:col-span-3 h-80">
+        <MapBlock />
+      </div>
+
+      <div>
+        <div
+          className="w-full h-80 bg-zinc-100 dark:bg-zinc-900 rounded-3xl p-6 shadow-lg 
+    flex flex-col gap-6 items-center justify-center"
+        >
+          <h2 className="text-2xl font-bold mb-4">Sunrise and Sunset</h2>
+
+          <div className="text-lg flex flex-col gap-1 items-center text-black bg-amber-200 p-4 rounded-2xl">
+            <p className="text-lg">Sunrise</p>
+            <p className="text-lg font-semibold">
+              {sunrise.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
+          </div>
+          <div className="text-lg flex flex-col gap-1 items-center text-black bg-indigo-200 p-4 rounded-2xl">
+            <p className="text-lg">Sunset</p>
+            <p className="text-lg font-semibold">
+              {sunset.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
