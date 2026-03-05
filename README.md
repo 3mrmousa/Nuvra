@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌤️ Nuvra Weather App
 
-## Getting Started
+## 🧠 About Nuvra
+**Nuvra** is a modern weather application built with **Next.js App Router** that provides real-time weather insights through a clean and intuitive interface.
 
-First, run the development server:
+The app focuses on delivering accurate weather data, interactive visualization, and a smooth user experience while demonstrating modern **server-first architecture** in Next.js.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Nuvra allows users to explore current conditions, upcoming forecasts, and geographical weather data using an interactive map interface.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- 🌍 Pick any location directly from an interactive map  
+- 🌡️ View current weather conditions instantly  
+- 📅 7-day forecast with daily temperature insights  
+- 📊 Weather charts for detailed hourly analysis  
+- 🌅 Sunrise and sunset information  
+- ⚡ Server-side data fetching for better performance  
+- 🎨 Clean responsive UI built with Tailwind CSS  
+- 🌙 Light / Dark mode support  
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠️ Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Framework:** Next.js (App Router)  
+**Language:** TypeScript  
+**Styling:** Tailwind CSS  
+**Map:** MapLibre GL (interactive map)  
+**Weather Data:** Open-Meteo API  
+**Geolocation:** Geoapify Reverse Geocoding API  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Architecture Highlights
+- Server Components for efficient rendering  
+- Server Actions for updating location data  
+- Cookie-based location persistence  
+- Context Providers for shared weather state  
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🎯 Purpose
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project was built for learning and portfolio purposes, focusing on:
+
+- Mastering **Next.js App Router architecture**
+- Working with **server components and server actions**
+- Integrating **multiple external APIs**
+- Building **interactive UI with map-based user input**
+- Designing **clean and responsive weather dashboards**
+
+---
+
+## 📊 Weather Data
+
+Weather information is powered by:
+
+- **Open-Meteo API** – Forecast, hourly weather, and climate data  
+- **Geoapify API** – Reverse geocoding for location identification  
+
+---
+
+## 🌐 Main Features in the App
+
+Inside the application users can:
+
+- Select a location using an **interactive map**
+- See **daily forecast cards**
+- Explore **hourly weather charts**
+- Check **sunrise and sunset times**
+- View weather information for **their selected coordinates**
+
+---
+
+## ⚠️ Note
+
+This project is intended for **educational and portfolio purposes** and uses publicly available weather APIs.
