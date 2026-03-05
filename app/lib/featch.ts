@@ -35,6 +35,8 @@ export async function featchStateByLanandLon(
   return res.json();
 }
 
+
+
 export async function fetchCitiesByCountry(countryCode: string) {
   const res = await fetch(
     `https://wft-geo-db.p.rapidapi.com/v1/geo/countries/${countryCode}/regions/CA/places`,
