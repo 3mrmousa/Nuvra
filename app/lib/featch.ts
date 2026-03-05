@@ -22,19 +22,28 @@ export async function featchStateByLanandLon(
   longitude: string,
   latitude: string,
 ) {
-  const url = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&apiKey=${process.env.GEOAPIFY_API_KEY}`;
+  const key = process.env.GEOAPIFY_API_KEY;
 
-  const res = await fetch(url, {
-    next: { revalidate: 3600 },
-  });
-
-  if (!res.ok) {
-    throw new Error(`Geoapify failed: ${res.status} ${res.statusText}`);
+  if (!key) {
+    throw new Error(
+      "Missing GEOAPIFY_API_KEY on server (Vercel env var not set)",
+    );
   }
 
-  return res.json();
-}
+  const url = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&apiKey=${key}`;
 
+  const res = await fetch(url, { next: { revalidate: 3600 } });
+
+  const text = await res.text();
+
+  if (!res.ok) {
+    throw new Error(
+      `Geoapify failed: ${res.status} ${res.statusText} | ${text}`,
+    );
+  }
+
+  return JSON.parse(text);
+}
 
 
 export async function fetchCitiesByCountry(countryCode: string) {
